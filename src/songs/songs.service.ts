@@ -1,24 +1,39 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
-import {CreateSongRequest, CreateSongResponse} from './dto/createSongReqRes';
-import { GetAllSongsResponse, Song } from './dto/getAllSongsRes';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreateSongRequest, CreateSongResponse } from './dto/createSongReqRes';
+import { GetAllSongsResponse, SongDTO } from './dto/getAllSongsRes';
+import { Song } from './entities/song.entity';
+
 @Injectable()
 export class SongsService {
-    constructor(@Inject('POSTGRES_POOL') private readonly sql: any) { }
+    constructor(
+        @InjectRepository(Song)
+        private readonly songRepository: Repository<Song>,
+    ) { }
+
     async getAllSongs(): Promise<GetAllSongsResponse> {
-        const result = await this.sql.query(`SELECT * FROM public.songs`);
-        return result;
+        const response = await this.songRepository.find();
+        if (!response) {
+            throw new NotFoundException('Songs not found');
+        }
+        return { songs: response, isSuccess: true };
     }
 
     async createSong(requestBody: CreateSongRequest): Promise<CreateSongResponse> {
-        const result = await this.sql.query(`INSERT INTO public.songs (title, artist, duration_seconds, release_date, language) VALUES ($1, $2, $3, $4, $5)`, [requestBody.title, requestBody.artist, requestBody.duration_seconds, requestBody.release_date, requestBody.language]);
+        const response = this.songRepository.create(requestBody);
+        const songSavedRes = await this.songRepository.save(response);
+        if (!response || !songSavedRes) {
+            throw new NotFoundException('Failed to save song to database');
+        }
         return { isSuccess: true };
     }
 
-    async getSongById(id: number): Promise<Song> {
-        const result = await this.sql.query(`SELECT * FROM public.songs WHERE song_id = $1`, [id]);
-        if(result.length === 0) {
-            throw new NotFoundException('Song not found')
+    async getSongById(id: number): Promise<SongDTO> {
+        const response = await this.songRepository.findOne({ where: { song_id: id } });
+        if (!response) {
+            throw new NotFoundException('Song not found');
         }
-        return result;
+        return response;
     }
 }

@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe } from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { CreateSongRequest, CreateSongResponse } from './dto/createSongReqRes';
-import { GetAllSongsResponse, Song } from './dto/getAllSongsRes';
+import { GetAllSongsResponse, SongDTO } from './dto/getAllSongsRes';
 
 @Controller('songs')
 export class SongsController {
-    constructor(private readonly songsService: SongsService) {}
+    constructor(private readonly songsService: SongsService) { }
 
     @Get()
     async findAll(): Promise<GetAllSongsResponse> {
@@ -17,7 +17,7 @@ export class SongsController {
     }
 
     @Get(':id')
-    async findOne(@Param('id') id: number): Promise<Song> {
+    async findOne(@Param('id', new ParseIntPipe()) id: number): Promise<SongDTO> {
         try {
             return await this.songsService.getSongById(id);
         } catch (error) {
@@ -35,12 +35,12 @@ export class SongsController {
     }
 
     @Put(':id')
-    update():string {
+    update(): string {
         return "Update songs based on id";
     }
 
     @Delete(':id')
-    delete():string {
+    delete(): string {
         return "Delete songs based on id";
     }
 }
