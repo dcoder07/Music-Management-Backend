@@ -1,5 +1,6 @@
-import { IsString, IsNotEmpty, IsNumber, IsDate } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsDate, IsOptional, IsBoolean } from 'class-validator';
 import { Type } from 'class-transformer';
+import { SongDTO } from './getAllSongsRes';
 
 export class CreateSongRequest {
   
@@ -24,6 +25,8 @@ export class CreateSongRequest {
 
 }
 
-export interface CreateSongResponse {
+export interface SongResponse {
+  message: string;
+  data?: SongDTO;
   isSuccess: boolean;
 }

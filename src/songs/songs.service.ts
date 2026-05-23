@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateSongRequest, CreateSongResponse } from './dto/createSongReqRes';
+import { CreateSongRequest, SongResponse} from './dto/createSongReqRes';
 import { GetAllSongsResponse, SongDTO } from './dto/getAllSongsRes';
 import { Song } from './entities/song.entity';
 
@@ -20,13 +20,13 @@ export class SongsService {
         return { songs: response, isSuccess: true };
     }
 
-    async createSong(requestBody: CreateSongRequest): Promise<CreateSongResponse> {
+    async createSong(requestBody: CreateSongRequest): Promise<SongResponse> {
         const response = this.songRepository.create(requestBody);
         const songSavedRes = await this.songRepository.save(response);
         if (!response || !songSavedRes) {
             throw new NotFoundException('Failed to save song to database');
         }
-        return { isSuccess: true };
+        return { message: 'Song created successfully', data: songSavedRes, isSuccess: true };
     }
 
     async getSongById(id: number): Promise<SongDTO> {
@@ -35,5 +35,21 @@ export class SongsService {
             throw new NotFoundException('Song not found');
         }
         return response;
+    }
+
+    async deleteSong(id: number): Promise<{ isSuccess: boolean }> {
+        const response = await this.songRepository.delete({ song_id: id });
+        if (!response) {
+            throw new NotFoundException('Failed to delete song');
+        }
+        return { isSuccess: true };
+    }
+
+    async updateSong(id: number, requestBody: CreateSongRequest): Promise<SongResponse> {
+        const response = await this.songRepository.update({ song_id: id }, requestBody);
+        if (!response) {
+            throw new NotFoundException('Failed to update song');
+        }
+        return { message: 'Song updated successfully', isSuccess: true };
     }
 }

@@ -1,4 +1,5 @@
 import { Type } from 'class-transformer';
+import { IsOptional } from 'class-validator';
 
 export class SongDTO {
 
@@ -20,6 +21,9 @@ export class SongDTO {
 }
 
 export class GetAllSongsResponse {
+    
+    @IsOptional()
     songs: SongDTO[];
+    
     isSuccess: boolean;
 }

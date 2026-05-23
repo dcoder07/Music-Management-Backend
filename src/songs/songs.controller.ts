@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe } from '@nestjs/common';
 import { SongsService } from './songs.service';
-import { CreateSongRequest, CreateSongResponse } from './dto/createSongReqRes';
+import { CreateSongRequest, SongResponse } from './dto/createSongReqRes';
 import { GetAllSongsResponse, SongDTO } from './dto/getAllSongsRes';
 
 @Controller('songs')
@@ -26,7 +26,7 @@ export class SongsController {
     }
 
     @Post()
-    async create(@Body() body: CreateSongRequest): Promise<CreateSongResponse> {
+    async create(@Body() body: CreateSongRequest): Promise<SongResponse> {
         try {
             return await this.songsService.createSong(body);
         } catch (error) {
@@ -35,12 +35,20 @@ export class SongsController {
     }
 
     @Put(':id')
-    update(): string {
-        return "Update songs based on id";
+    async update(@Param('id', new ParseIntPipe()) id: number, @Body() body: CreateSongRequest): Promise<SongResponse> {
+        try {
+            return await this.songsService.updateSong(id, body);
+        } catch (error) {
+            throw error;
+        }
     }
 
     @Delete(':id')
-    delete(): string {
-        return "Delete songs based on id";
+    async delete(@Param('id', new ParseIntPipe()) id: number): Promise<{ isSuccess: boolean }> {
+        try {
+            return await this.songsService.deleteSong(id);
+        } catch (error) {
+            throw error;
+        }
     }
 }
