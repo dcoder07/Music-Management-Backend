@@ -7,10 +7,6 @@ export class CreateSongRequest {
   @IsString()
   @IsNotEmpty()
   readonly title: string;
-  
-  @IsString()
-  @IsNotEmpty()
-  readonly artist: string;
 
   @IsNumber()
   @IsNotEmpty()

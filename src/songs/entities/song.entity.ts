@@ -1,4 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
+import { Playlist } from 'src/playlists/entities/playlist.entity';
+import { Artist } from 'src/artists/entities/artist.entity';
 
 @Entity('songs')
 export class Song {
@@ -7,9 +9,6 @@ export class Song {
 
   @Column()
   title: string;
-
-  @Column()
-  artist: string;
 
   @Column()
   duration_seconds: number;
@@ -22,4 +21,13 @@ export class Song {
 
   @CreateDateColumn()
   created_at: Date;
+
+  // Many songs belong to one playlist
+  @ManyToOne(() => Playlist, (playlist) => playlist.songs)
+  playList: Playlist;
+
+  //Each song can have muliple artists
+  @ManyToMany(() => Artist, (artist) => artist.songs, { cascade: true })
+  @JoinTable({ name: 'songs_artists'})
+  artists: Artist[];
 }

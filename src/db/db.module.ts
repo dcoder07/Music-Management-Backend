@@ -17,7 +17,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           rejectUnauthorized: true,
         },
         entities: [__dirname + '/../**/*.entity{.ts,.js}'],
-        synchronize: false,
+        synchronize: true,
         logging: true,
       }),
       inject: [ConfigService],

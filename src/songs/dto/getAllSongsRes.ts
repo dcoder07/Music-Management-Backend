@@ -7,8 +7,6 @@ export class SongDTO {
 
     title: string;
 
-    artist: string;
-
     duration_seconds: number;
 
     @Type(() => Date)
