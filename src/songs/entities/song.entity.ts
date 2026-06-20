@@ -22,9 +22,10 @@ export class Song {
   @CreateDateColumn()
   created_at: Date;
 
-  // Many songs belong to one playlist
-  @ManyToOne(() => Playlist, (playlist) => playlist.songs)
-  playList: Playlist;
+  // Many songs can belong to many playlists
+  @ManyToMany(() => Playlist, (playlist) => playlist.songs)
+  @JoinTable({ name: 'songs_playlists' })
+  playLists: Playlist[];
 
   //Each song can have muliple artists
   @ManyToMany(() => Artist, (artist) => artist.songs, { cascade: true })

@@ -1,9 +1,9 @@
-import { IsString, IsNotEmpty, IsNumber, IsDate, IsOptional, IsBoolean } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsDate, IsOptional, IsBoolean, IsArray } from 'class-validator';
 import { Type } from 'class-transformer';
 import { SongDTO } from './getAllSongsRes';
 
 export class CreateSongRequest {
-  
+
   @IsString()
   @IsNotEmpty()
   readonly title: string;
@@ -18,6 +18,16 @@ export class CreateSongRequest {
 
   @IsString()
   language: string;
+
+  @IsArray()
+  @IsNumber({}, { each: true })
+  @IsOptional()
+  readonly playlistIds?: number[];
+
+  @IsArray()
+  @IsNumber({}, { each: true })
+  @IsOptional()
+  readonly artistIds?: number[];
 
 }
 
