@@ -2,6 +2,7 @@ import { Controller, Get, Post, Put, Delete, Param, Body, ParseIntPipe } from '@
 import { SongsService } from './songs.service';
 import { CreateSongRequest, SongResponse } from './dto/createSongReqRes';
 import { GetAllSongsResponse, SongDTO } from './dto/getAllSongsRes';
+import { AddSongToPlaylistRequest } from './dto/addSongToPlaylistReq';
 
 @Controller('songs')
 export class SongsController {
@@ -47,6 +48,15 @@ export class SongsController {
     async delete(@Param('id', new ParseIntPipe()) id: number): Promise<{ isSuccess: boolean }> {
         try {
             return await this.songsService.deleteSong(id);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    @Post('add-to-playlist')
+    async addToPlaylist(@Body() body: AddSongToPlaylistRequest): Promise<{ message: string; isSuccess: boolean }> {
+        try {
+            return await this.songsService.addSongToPlaylist(body);
         } catch (error) {
             throw error;
         }
